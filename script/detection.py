@@ -10,6 +10,7 @@ from keras.models import Sequential
 from keras.layers import Embedding, LSTM, Dense, Dropout
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
+import pickle
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -37,7 +38,7 @@ def clean_text(text):
     return ' '.join(words)
 
 cleaned_data = []
-for text in tqdm(data['text']):
+for text in tqdm(data['text']):              #tqdm: librarby to check/load dataset(columns)
     cleaned_data.append(clean_text(text))
 
 data['text'] = cleaned_data
@@ -54,6 +55,9 @@ tokenizer = Tokenizer(num_words=MAX_WORDS)
 tokenizer.fit_on_texts(data['text'])
 sequences = tokenizer.texts_to_sequences(data['text'])
 padded_sequences = pad_sequences(sequences, maxlen=MAX_SEQ_LENGTH)
+
+with open('tokenizer.pkl', 'wb') as f:
+    pickle.dump(tokenizer, f)
 
 
 X_train, X_test, y_train, y_test = train_test_split(
